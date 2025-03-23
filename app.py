@@ -1,5 +1,3 @@
-# Guardar el contenido corregido del archivo como app.py
-codigo_corregido = """
 import streamlit as st
 import pandas as pd
 import openai
@@ -29,7 +27,7 @@ if uploaded_file:
     elif uploaded_file.name.endswith(".pdf"):
         reader = PyPDF2.PdfReader(uploaded_file)
         texto = " ".join([page.extract_text() for page in reader.pages if page.extract_text()])
-        preguntas = [line.strip() for line in texto.split("\\n") if "?" in line or line.strip().startswith("¿")]
+        preguntas = [line.strip() for line in texto.split("\n") if "?" in line or line.strip().startswith("¿")]
 
     if preguntas:
         st.success(f"Se detectaron {len(preguntas)} preguntas. Procesando...")
@@ -38,7 +36,7 @@ if uploaded_file:
         progress = st.progress(0, text="Evaluando preguntas...")
 
         for i, pregunta in enumerate(preguntas):
-            prompt = f'''
+            prompt = f"""
 Evalúa la siguiente pregunta de encuesta considerando estos aspectos:
 - Claridad
 - Pertinencia
@@ -47,7 +45,7 @@ Evalúa la siguiente pregunta de encuesta considerando estos aspectos:
 - Puntaje del 1 al 10
 
 Pregunta: {pregunta}
-'''
+"""
             try:
                 response = openai.ChatCompletion.create(
                     model="gpt-3.5-turbo",
@@ -56,7 +54,7 @@ Pregunta: {pregunta}
                 )
                 resultado = response.choices[0].message.content.strip()
                 evaluaciones.append((pregunta, resultado))
-                linea_puntaje = [l for l in resultado.split("\\n") if "Puntaje" in l or "puntaje" in l]
+                linea_puntaje = [l for l in resultado.split("\n") if "Puntaje" in l or "puntaje" in l]
                 if linea_puntaje:
                     try:
                         valor = int("".join([c for c in linea_puntaje[-1] if c.isdigit()]))
@@ -83,18 +81,18 @@ Pregunta: {pregunta}
             pdf = FPDF()
             pdf.add_page()
             pdf.set_font("Arial", size=12)
-            pdf.multi_cell(0, 10, f"Informe de Evaluación de Encuesta\\nPuntaje promedio: {promedio:.1f}/10\\n")
+            pdf.multi_cell(0, 10, f"Informe de Evaluación de Encuesta\nPuntaje promedio: {promedio:.1f}/10\n")
             for idx, (pregunta, evaluacion) in enumerate(evaluaciones):
-                contenido = f"Pregunta {idx + 1}: {pregunta}\\nEvaluación: {evaluacion}\\n"
+                contenido = f"Pregunta {idx + 1}: {pregunta}\nEvaluación: {evaluacion}\n"
                 pdf.multi_cell(0, 10, contenido)
-            pdf.multi_cell(0, 10, "Evaluación general del instrumento:\\n")
-            pdf.multi_cell(0, 10, "- Introducción clara: Se presenta el propósito de la encuesta y se incluye consentimiento informado.\\n")
-            pdf.multi_cell(0, 10, "- Datos sociodemográficos: Preguntas básicas como edad, sexo, ocupación o semestre.\\n")
-            pdf.multi_cell(0, 10, "- Coherencia temática: Las preguntas se relacionan directamente con los objetivos de la encuesta.\\n")
-            pdf.multi_cell(0, 10, "- Redacción neutral: No inducen respuestas ni contienen juicios de valor.\\n")
-            pdf.multi_cell(0, 10, "- Secuencia lógica: Las preguntas avanzan de lo general a lo específico.\\n")
-            pdf.multi_cell(0, 10, "- Duración razonable: El número de preguntas no resulta excesivo para el encuestado.\\n")
-            pdf.multi_cell(0, 10, "- Uso adecuado de escalas: Se emplean escalas válidas, como Likert, cuando es pertinente.\\n")
+            pdf.multi_cell(0, 10, "Evaluación general del instrumento:\n")
+            pdf.multi_cell(0, 10, "- Introducción clara: Se presenta el propósito de la encuesta y se incluye consentimiento informado.\n")
+            pdf.multi_cell(0, 10, "- Datos sociodemográficos: Preguntas básicas como edad, sexo, ocupación o semestre.\n")
+            pdf.multi_cell(0, 10, "- Coherencia temática: Las preguntas se relacionan directamente con los objetivos de la encuesta.\n")
+            pdf.multi_cell(0, 10, "- Redacción neutral: No inducen respuestas ni contienen juicios de valor.\n")
+            pdf.multi_cell(0, 10, "- Secuencia lógica: Las preguntas avanzan de lo general a lo específico.\n")
+            pdf.multi_cell(0, 10, "- Duración razonable: El número de preguntas no resulta excesivo para el encuestado.\n")
+            pdf.multi_cell(0, 10, "- Uso adecuado de escalas: Se emplean escalas válidas, como Likert, cuando es pertinente.\n")
             buffer = io.BytesIO()
             pdf.output(buffer)
             b64 = base64.b64encode(buffer.getvalue()).decode()
@@ -106,7 +104,7 @@ else:
     st.info("Carga un archivo para comenzar.")
 
     st.subheader("📋 Evaluación general del instrumento")
-    st.markdown(\"""
+    st.markdown("""
 - 📌 **Introducción clara**: Se presenta el propósito de la encuesta y se incluye consentimiento informado.
 - 👤 **Datos sociodemográficos**: Preguntas básicas como edad, sexo, ocupación o semestre.
 - 🔍 **Coherencia temática**: Las preguntas se relacionan directamente con los objetivos de la encuesta.
@@ -114,11 +112,5 @@ else:
 - 🔀 **Secuencia lógica**: Las preguntas avanzan de lo general a lo específico.
 - ⏳ **Duración razonable**: El número de preguntas no resulta excesivo para el encuestado.
 - 📊 **Uso adecuado de escalas**: Se emplean escalas válidas, como Likert, cuando es pertinente.
-\""\")
-"""
+""")
 
-# Guardar archivo
-
-    f.write(codigo_corregido)
-
-file_path
