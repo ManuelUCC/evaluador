@@ -118,8 +118,7 @@ else:
 """
 
 # Guardar archivo
-file_path = "/mnt/data/app.py"
-with open(file_path, "w", encoding="utf-8") as f:
+
     f.write(codigo_corregido)
 
 file_path
